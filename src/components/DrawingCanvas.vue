@@ -1,9 +1,12 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, defineExpose } from 'vue';
+import { io } from 'socket.io-client';
+
 
 const canvasRef = ref(null);
 const isDrawing = ref(false);
 const context = ref(null);
+const socket = io('http://localhost:3000'); //connect to the server
 
 const startDrawing = (event) => {
   isDrawing.value = true;
@@ -15,6 +18,10 @@ const draw = (event) => {
   if (!isDrawing.value) return;
   context.value.lineTo(event.offsetX, event.offsetY);
   context.value.stroke();
+  socket.emit('drawing', {
+    offsetX: event.offsetX,
+    offsetY: event.offsetY,
+  });
 };
 
 const stopDrawing = () => {
@@ -27,6 +34,7 @@ const clearCanvas = () => {
   context.value.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height);
   context.value.fillStyle = 'white';
   context.value.fillRect(0, 0, canvasRef.value.width, canvasRef.value.height);
+  socket.emit('clearCanvas');
 };
 
 const downloadCanvas = () => {
@@ -36,6 +44,16 @@ const downloadCanvas = () => {
   link.href = canvasRef.value.toDataURL('image/png');
   link.click();
 };
+socket.on('drawing', (data) => {
+  if (!isDrawing.value) {
+    context.value.lineTo(data.offsetX, data.offsetY);
+    context.value.stroke();
+  }
+});
+
+socket.on('clearCanvas', () => {
+  clearCanvas();
+});
 
 defineExpose({ clearCanvas, downloadCanvas });
 
