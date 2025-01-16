@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ckpack/vue-color": "^1.6.0",
     "express": "^4.21.2",
     "oh-vue-icons": "^1.0.0-rc3",
     "socket.io": "^4.8.1",
