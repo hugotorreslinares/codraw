@@ -416,6 +416,7 @@ canvas {
 
 input[type="range"] {
   -webkit-appearance: none;
+  appearance: none;
   height: 8px;
   background: #ddd;
   border-radius: 4px;
