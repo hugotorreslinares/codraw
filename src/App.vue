@@ -1,7 +1,17 @@
 <template>
-  <div id="app">
-    <NavBar :clearCanvas="clearCanvas" :downloadCanvas="downloadCanvas"/>
-    <DrawingCanvas ref="drawingCanvasRef"/>
+  <div class="min-h-screen bg-gray-50">
+    <NavBar 
+      :downloadCanvas="downloadCanvas"
+      :currentUser="currentUser"
+    />
+    
+    <!-- Main content -->
+    <main class="w-full py-8">
+      <DrawingCanvas 
+        ref="drawingCanvasRef"
+        @userJoined="handleUserJoined" 
+      />
+    </main>
   </div>
 </template>
 
@@ -10,21 +20,24 @@ import { ref } from 'vue'
 import NavBar from './components/NavBar.vue'
 import DrawingCanvas from './components/DrawingCanvas.vue'
 
-const drawingCanvasRef = ref(null) 
+const drawingCanvasRef = ref(null)
+const currentUser = ref('')
 
-// Method to clear the canvas
-const clearCanvas = () => {
-  if (drawingCanvasRef.value) {
-    drawingCanvasRef.value.clearCanvas()
-  }
-}
 // Method to download the canvas as PNG
 const downloadCanvas = () => {
-  console.log("downloading")
   if (drawingCanvasRef.value) {
     drawingCanvasRef.value.downloadCanvas()
   }
 }
+
+const handleUserJoined = (username) => {
+  currentUser.value = username
+}
 </script>
 
-<style scoped></style>
+<style>
+/* Add to your global styles */
+body {
+  overscroll-behavior: none; /* Prevent pull-to-refresh on mobile */
+}
+</style>

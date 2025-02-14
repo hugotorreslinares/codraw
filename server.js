@@ -1,42 +1,39 @@
 import express from 'express';
-import http from 'http';
+import { createServer } from 'http';
 import { Server } from 'socket.io';
-import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173", // Adjust this to match your client URL
+        origin: "http://localhost:5173", // Vite's default development port
         methods: ["GET", "POST"]
     }
 });
 
-app.use(cors({
-    origin: "http://localhost:5173" // Adjust this to match your client URL
-}));
-app.use(express.static('public'));
+// Serve static files from the dist directory
+app.use(express.static(path.join(__dirname, 'dist')));
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
+    console.log('User connected');
 
-    socket.on('startDrawing', (data) => {
-        socket.broadcast.emit('startDrawing', data);
-    });
-
-    socket.on('stopDrawing', () => {
-        socket.broadcast.emit('stopDrawing');
-    });
-    socket.on('clearCanvas', () => {
-        socket.broadcast.emit('clearCanvas');
+    // Handle drawing events
+    socket.on('draw', (data) => {
+        socket.broadcast.emit('draw', data);
     });
 
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+        console.log('User disconnected');
     });
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });

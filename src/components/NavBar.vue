@@ -1,14 +1,21 @@
 <template>
-  <nav class="bg-gray-800 p-4">
-    <div class="container mx-auto flex justify-between items-center">
-      <div class="text-white text-lg">CoDraw</div>
-      <div class="flex space-x-4">
-        <a href="#" class="text-gray-300 hover:text-white" @click="clearCanvas">
-          <VIcon name="md-delete-round" class="h-6 w-6" />
-        </a>
-        <a href="#" class="text-gray-300 hover:text-white" @click="downloadCanvas">
-          <VIcon name="bi-download" class="h-6 w-6" />
-        </a>
+  <nav class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <div class="text-xl font-bold text-gray-800">CoDraw</div>
+          <div v-if="currentUser" class="ml-4 text-gray-600">
+            | <span class="ml-2">{{ currentUser }}</span>
+          </div>
+        </div>
+        <div>
+          <button
+            @click="downloadCanvas"
+            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+          ><VIcon name="bi-download" class="h-6 w-6" />
+            Download
+          </button>
+        </div>
       </div>
     </div>
   </nav>
@@ -22,8 +29,15 @@ import { defineProps } from 'vue'
 addIcons(BiDownload, MdDeleteRound)
 
 const props = defineProps({
-  clearCanvas: Function,
-  downloadCanvas: Function
+  downloadCanvas: {
+    type: Function,
+    required: true
+  },
+  currentUser: {
+    type: String,
+    required: false,
+    default: ''
+  }
 })
 </script>
 
